@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compteur</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        #counter-container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+        }
+        #counter {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="counter-container">
+        <h1>Compteur Actuel</h1>
+        <div id="counter">...</div>
+    </div>
+
+    <script>
+        const counterElement = document.getElementById('counter');
+        const apiUrl = 'api.php';
+
+        // Fonction pour récupérer et mettre à jour le compteur
+        async function updateCounter() {
+            try {
+                const response = await fetch(`${apiUrl}?action=get`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                counterElement.textContent = data.count;
+            } catch (error) {
+                console.error("Erreur lors de la récupération du compteur:", error);
+                counterElement.textContent = 'Erreur';
+            }
+        }
+
+        // Mettre à jour le compteur toutes les 3 secondes
+        setInterval(updateCounter, 3000);
+
+        // Mettre à jour immédiatement au chargement de la page
+        document.addEventListener('DOMContentLoaded', updateCounter);
+    </script>
+
+</body>
+</html>
