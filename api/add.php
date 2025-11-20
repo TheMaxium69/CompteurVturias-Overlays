@@ -2,12 +2,19 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); // Pour autoriser les requêtes depuis n'importe quelle origine
 
-$file = 'compteur.txt';
 
 // Action par défaut : récupérer la valeur
-$action = isset($_GET['action']) ? $_GET['action']  : 'get';
+$auth = isset($_GET['auth']) ? $_GET['auth']  : 'auth';
+$people = isset($_GET['people']) ? $_GET['people']  : 'compteur';
 
-if ($action == 'increment') {
+if ($people == "noni" ||$people == "maxime" ||$people == "aurore" ||$people == "damnyts" ||$people == "kurai"){
+    $file = '../db/'. $people .'.txt';
+} else {
+    $file = '../db/compteur.txt';
+}
+
+require('mdp.php');
+if ($auth === $password) {
     $fp = fopen($file, 'c+');
     if (flock($fp, LOCK_EX)) { // Verrouillage exclusif
         $count = (int)fread($fp, filesize($file) ?: 1);
@@ -22,12 +29,6 @@ if ($action == 'increment') {
         echo json_encode(['success' => false, 'error' => 'Could not get the lock']);
     }
     fclose($fp);
-} elseif ($action == 'get') {
-    if (!file_exists($file)) {
-        file_put_contents($file, '0');
-    }
-    $count = (int)file_get_contents($file);
-    echo json_encode(['count' => $count]);
 } else {
     echo json_encode(['success' => false, 'error' => 'Invalid action']);
 }
